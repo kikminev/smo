@@ -1,1 +1,1 @@
-# smo
+# Symfony5 playground
