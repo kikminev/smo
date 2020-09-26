@@ -38,10 +38,10 @@ class Customer
     private $phone;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Account::class)
+     * @ORM\ManyToOne(targetEntity=BusinessUnit::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $Account;
+    private $businessUnit;
 
     public function getId(): ?int
     {
@@ -96,15 +96,19 @@ class Customer
         return $this;
     }
 
-    public function getAccount(): ?Account
+    /**
+     * @return mixed
+     */
+    public function getBusinessUnit()
     {
-        return $this->Account;
+        return $this->businessUnit;
     }
 
-    public function setAccount(?Account $Account): self
+    /**
+     * @param mixed $businessUnit
+     */
+    public function setBusinessUnit($businessUnit): void
     {
-        $this->Account = $Account;
-
-        return $this;
+        $this->businessUnit = $businessUnit;
     }
 }
