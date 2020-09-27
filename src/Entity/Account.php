@@ -30,7 +30,7 @@ class Account
     private $password;
 
     /**
-     * @ORM\OneToMany(targetEntity=BusinessUnit::class, mappedBy="account", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=BusinessUnit::class, mappedBy="account")
      */
     private $businessUnits;
 

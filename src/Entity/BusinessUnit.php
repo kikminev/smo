@@ -23,6 +23,11 @@ class BusinessUnit
     private $name;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $apiToken;
+
+    /**
      * @ORM\ManyToOne(targetEntity=Account::class, inversedBy="businessUnits")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -53,6 +58,18 @@ class BusinessUnit
     public function setAccount(?Account $account): self
     {
         $this->account = $account;
+
+        return $this;
+    }
+
+    public function getApiToken(): string
+    {
+        return $this->apiToken;
+    }
+
+    public function setApiToken(string $apiToken): self
+    {
+        $this->apiToken = $apiToken;
 
         return $this;
     }

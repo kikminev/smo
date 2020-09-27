@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 /**
  * @ORM\Entity(repositoryClass=CustomerRepository::class)
@@ -38,6 +39,7 @@ class Customer
     private $phone;
 
     /**
+     * @Ignore()
      * @ORM\ManyToOne(targetEntity=BusinessUnit::class)
      * @ORM\JoinColumn(nullable=false)
      */
@@ -96,18 +98,12 @@ class Customer
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getBusinessUnit()
+    public function getBusinessUnit():BusinessUnit
     {
         return $this->businessUnit;
     }
 
-    /**
-     * @param mixed $businessUnit
-     */
-    public function setBusinessUnit($businessUnit): void
+    public function setBusinessUnit(BusinessUnit $businessUnit): void
     {
         $this->businessUnit = $businessUnit;
     }
