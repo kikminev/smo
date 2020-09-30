@@ -19,32 +19,21 @@ class CustomerRepository extends ServiceEntityRepository
         parent::__construct($registry, Customer::class);
     }
 
-    // /**
-    //  * @return Customer[] Returns an array of Customer objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param string $businessUnitToken
+     *
+     * @return Customer[] Returns an array of Customer objects
+     */
+    public function findByBusinessUnitToken(string $businessUnitToken, int $maxResult, int $offset)
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
+            ->select('c, b')
+            ->innerJoin('c.businessUnit', 'b')
+            ->andWhere('b.apiToken = :token')
+            ->setParameter('token', $businessUnitToken)
+            ->setMaxResults($maxResult)
+            ->setFirstResult($offset)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Customer
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

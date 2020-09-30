@@ -1,3 +1,0 @@
-#customers:
-#    path: /customers
-#    controller: App\Controller\CustomersController::customers
