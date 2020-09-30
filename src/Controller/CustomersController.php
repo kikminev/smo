@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Entity\Customer;
 use App\Repository\CustomerRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,12 +56,25 @@ class CustomersController
 
     /**
      * Update customer
-     * @Route("/customers/{id}", methods={"GET"})
+     * @Route("/customers/{id}", methods={"PATCH"})
      * @param Customer $customer
      * @return Response
      */
-    public function updateCustomer(Customer $customer):Response {
-//        $data = $request->getContent();
-//        $test = $this->serializer->deserialize($request->getContent(), Customer::class, 'json');
+    public function updateCustomer(Customer $customer, Request $request, EntityManagerInterface $entityManager):Response {
+
+        // validate the info
+        $data = json_decode($request->getContent());
+
+        if (isset($data->firstName)) {
+            $customer->setFirstName($data->firstName);
+        } else if (isset($data->lastName)) {
+            $customer->setLastName($data->lastName);
+        } else if (isset($data->email)) {
+            $customer->setEmail($data->email);
+        } else if (isset($data->phone)) {
+            $customer->setPhone($data->phone);
+        }
+
+        $entityManager->flush();
     }
 }
