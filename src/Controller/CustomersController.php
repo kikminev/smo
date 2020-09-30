@@ -67,14 +67,24 @@ class CustomersController
 
         if (isset($data->firstName)) {
             $customer->setFirstName($data->firstName);
-        } else if (isset($data->lastName)) {
+        }
+
+        if (isset($data->lastName)) {
             $customer->setLastName($data->lastName);
-        } else if (isset($data->email)) {
+        }
+
+        if (isset($data->email)) {
             $customer->setEmail($data->email);
-        } else if (isset($data->phone)) {
+        }
+
+        if (isset($data->phone)) {
             $customer->setPhone($data->phone);
         }
 
+
+        $entityManager->persist($customer);
         $entityManager->flush();
+
+        return new Response(json_encode('ok'));
     }
 }
