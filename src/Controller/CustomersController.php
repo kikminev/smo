@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\Customer;
 use App\Pagination\OffsetCalculator;
 use App\Repository\CustomerRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,10 +18,12 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 class CustomersController
 {
     private SerializerInterface $serializer;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(SerializerInterface $serializer)
+    public function __construct(SerializerInterface $serializer, EntityManagerInterface $entityManager)
     {
         $this->serializer = $serializer;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -75,8 +78,25 @@ class CustomersController
      * @param Customer $customer
      * @return Response
      */
-    public function createCustomer()
+    public function createCustomer(Request $request)
     {
+        $data = $request->request->all();
+        // VALIDATE
+        $customer = new Customer();
+
+        $propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()
+            ->enableMagicCall()
+            ->getPropertyAccessor();
+
+        foreach ($data as $propertyName => $value) {
+            $propertyAccessor->setValue($customer, $propertyName, $value);
+        }
+
+        $this->entityManager->persist($customer);
+        $this->entityManager->flush();
+
+
+        echo 'ok'; exit;
         // return 201
     }
     // create customer
