@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 use App\Entity\Customer;
+use App\Pagination\OffsetCalculator;
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class CustomersController
 {
@@ -24,35 +26,22 @@ class CustomersController
     /**
      * List customers
      *
-     * @Route("/customers", methods={"GET"})
+     * @Route("/customers/{id}", methods={"GET"})
      * @param CustomerRepository $customerRepository
      * @return Response
      */
-    public function customers(CustomerRepository $customerRepository):Response
+    public function customers(CustomerRepository $customerRepository, OffsetCalculator $offsetCalculator, int $id = null):Response
     {
+
+        // require the Content-Type header be set to application/json or throw a 415 Unsupported Media Type HTTP
         // some test string
         $token = '789mGTmVTKOd8Lvfft789mGTm43fhVTghg8Lvfft';
-        // ids
-        // limit
-        // page
-        // sort by
-
-        // validate filters
-        //
-
-        $limit = 10;
         $page = 1;
-        if(1 == $page) {
-            $offset = 0;
-        } else {
-            $offset = ($limit * $page) - $limit + 1;
-        }
 
-        $customers = $customerRepository->findByBusinessUnitToken($token, $limit, $offset);
+        $customers = $customerRepository->findByBusinessUnitToken($token, OffsetCalculator::DEFAULT_ITEMS_PER_PAGE, OffsetCalculator::calculate($page), $id);
 
         return new JsonResponse($this->serializer->serialize($customers, 'json'), 200, [], true);
     }
-
 
     /**
      * Update customer
@@ -61,30 +50,35 @@ class CustomersController
      * @return Response
      */
     public function updateCustomer(Customer $customer, Request $request, EntityManagerInterface $entityManager):Response {
+        // todo: find the customer by business unit
 
-        // validate the info
-        $data = json_decode($request->getContent());
+        $data = json_decode($request->getContent(), true);
 
-        if (isset($data->firstName)) {
-            $customer->setFirstName($data->firstName);
+        $propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()
+            ->enableMagicCall()
+            ->getPropertyAccessor();
+
+        foreach ($data as $propertyName => $value) {
+            $propertyAccessor->setValue($customer, $propertyName, $value);
         }
-
-        if (isset($data->lastName)) {
-            $customer->setLastName($data->lastName);
-        }
-
-        if (isset($data->email)) {
-            $customer->setEmail($data->email);
-        }
-
-        if (isset($data->phone)) {
-            $customer->setPhone($data->phone);
-        }
-
 
         $entityManager->persist($customer);
         $entityManager->flush();
 
+        // return what?
         return new Response(json_encode('ok'));
     }
+
+    /**
+     * Update customer
+     * @Route("/customers", methods={"POST"})
+     * @param Customer $customer
+     * @return Response
+     */
+    public function createCustomer()
+    {
+        // return 201
+    }
+    // create customer
+    // delete customer
 }
